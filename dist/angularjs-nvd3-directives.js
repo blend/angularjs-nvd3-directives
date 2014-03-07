@@ -3124,12 +3124,14 @@
       return {
         restrict: 'EA',
         scope: {
-          data: '=',
+          data: '='
         },
         controller: [ '$scope', '$element', '$attrs',
           function ( $scope, $element, $attrs ) {
             $scope.d3Call = function ( data, chart ) {
-              checkElementID( $scope, $attrs, $element, chart, data );
+              d3.select( '#table-container' )
+                .datum( data )
+                .call( chart );
             };
           }
         ],
@@ -3205,29 +3207,27 @@
 
                   var chart = nv.models.indentedTree()
                     .tableClass( 'table table-striped' ) //for bootstrap styling
-                  .width( 400 )
-                    .height( 400 )
-                    .columns( [ {
-                      key: 'key',
-                      label: 'Name',
-                      showCount: true,
-                      width: '75%',
-                      type: 'text',
+                  .columns( [ {
+                    key: 'key',
+                    label: 'Name',
+                    showCount: true,
+                    width: '75%',
+                    type: 'text',
 
-                      classes: function ( d ) {
-                        return d.url ? 'clickable name' : 'name';
-                      },
-                      click: function ( d ) {
-                        if ( d.url ) {
-                          window.location.href = d.url;
-                        }
+                    classes: function ( d ) {
+                      return d.url ? 'clickable name' : 'name';
+                    },
+                    click: function ( d ) {
+                      if ( d.url ) {
+                        window.location.href = d.url;
                       }
-                    }, {
-                      key: 'type',
-                      label: 'Type',
-                      width: '25%',
-                      type: 'text'
-                    } ] );
+                    }
+                  }, {
+                    key: 'type',
+                    label: 'Type',
+                    width: '25%',
+                    type: 'text'
+                  } ] );
 
 
                   //                             d3.select('#chart')
