@@ -24,7 +24,7 @@
         var dataAttributeChartID; //randomly generated if id attribute doesn't exist
         if(!attrs.id){
             dataAttributeChartID = 'chartid' + Math.floor(Math.random()*1000000001);
-            angular.element(element).attr('data-chartid', dataAttributeChartID );    
+            angular.element(element).attr('data-chartid', dataAttributeChartID );
             //if an id is not supplied, create a random id.
             if(d3.select('[data-chartid=' + dataAttributeChartID + '] svg').empty()) {
                 d3.select('[data-chartid=' + dataAttributeChartID + ']').append('svg')
@@ -39,7 +39,7 @@
                 .attr('width', scope.width)
                 .datum(data)
                 .transition().duration((attrs.transitionduration === undefined ? 250 : (+attrs.transitionduration)))
-                .call(chart);  
+                .call(chart);
             }
         } else {
             if(d3.select('#' + attrs.id + ' svg').empty()) {
@@ -53,7 +53,7 @@
                 .transition().duration((attrs.transitionduration === undefined ? 250 : (+attrs.transitionduration)))
                 .call(chart);
             }
-    }    
+    }
 
     angular.module('nvd3ChartDirectives', [])
         .directive('nvd3LineChart', [function(){
@@ -2019,7 +2019,7 @@
                         if(!$attrs.id){
 
                             dataAttributeChartID = 'chartid' + Math.floor(Math.random() * 1000000001);
-                            angular.element($element).attr('data-chartid', dataAttributeChartID );    
+                            angular.element($element).attr('data-chartid', dataAttributeChartID );
 
                             selectedChart = d3.select('[data-iem-chartid=' + dataAttributeChartID + '] svg')
                                 .attr('height', $scope.height)
@@ -2141,7 +2141,142 @@
                     }, (attrs.objectequality === undefined ? false : (attrs.objectequality === 'true')));
                 }
             };
-        }]);
+        }])
+
+
+        .directive('nvd3IndentedTable', [function(){
+            return {
+                restrict: 'EA',
+                scope: {
+                    data: '=',
+                },
+                controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs){
+                    $scope.d3Call = function(data, chart){
+                        checkElementID($scope, $attrs, $element, chart, data);
+                    };
+                }],
+                link: function(scope, element, attrs){
+                    scope.$watch('data', function(data){
+                        if(data){
+                            //if the chart exists on the scope, do not call addGraph again, update data and call the chart.
+                            if(scope.chart){
+                                return scope.d3Call(data, scope.chart);
+                            }
+
+
+
+                          var testData = function() {
+                            return [{
+                              key: 'NVD3',
+                              url: 'http://novus.github.com/nvd3',
+                              values: [
+                                {
+                                  key: 'Charts',
+                                  _values: [
+                                    {
+                                      key: 'Simple Line',
+                                      type: 'Historical',
+                                      url: 'http://novus.github.com/nvd3/ghpages/line.html'
+                                    },
+                                    {
+                                      key: 'Scatter / Bubble',
+                                      type: 'Snapshot',
+                                      url: 'http://novus.github.com/nvd3/ghpages/scatter.html'
+                                    },
+                                    {
+                                      key: 'Stacked / Stream / Expanded Area',
+                                      type: 'Historical',
+                                      url: 'http://novus.github.com/nvd3/ghpages/stackedArea.html'
+                                    },
+                                    {
+                                      key: 'Discrete Bar',
+                                      type: 'Snapshot',
+                                      url: 'http://novus.github.com/nvd3/ghpages/discreteBar.html'
+                                    },
+                                    {
+                                      key: 'Grouped / Stacked Multi-Bar',
+                                      type: 'Snapshot / Historical',
+                                      url: 'http://novus.github.com/nvd3/ghpages/multiBar.html'
+                                    },
+                                    {
+                                      key: 'Horizontal Grouped Bar',
+                                      type: 'Snapshot',
+                                      url: 'http://novus.github.com/nvd3/ghpages/multiBarHorizontal.html'
+                                    },
+                                    {
+                                      key: 'Line and Bar Combo',
+                                      type: 'Historical',
+                                      url: 'http://novus.github.com/nvd3/ghpages/linePlusBar.html'
+                                    },
+                                    {
+                                      key: 'Cumulative Line',
+                                      type: 'Historical',
+                                      url: 'http://novus.github.com/nvd3/ghpages/cumulativeLine.html'
+                                    },
+                                    {
+                                      key: 'Line with View Finder',
+                                      type: 'Historical',
+                                      url: 'http://novus.github.com/nvd3/ghpages/lineWithFocus.html'
+                                    }
+                                  ]
+                                },
+                                {
+                                  key: 'Chart Components',
+                                  _values: [
+                                    {
+                                      key: 'Legend',
+                                      type: 'Universal',
+                                      url: 'http://novus.github.com/nvd3/examples/legend.html'
+                                    }
+                                  ]
+                                }
+                              ]
+                            }];
+                          };
+
+                          nv.addGraph({
+                            generate: function() {
+                              var chart = nv.models.indentedTree()
+                                    .tableClass('table table-striped') //for bootstrap styling
+                                    .columns([
+                                      {
+                                        key: 'key',
+                                        label: 'Name',
+                                        showCount: true,
+                                        width: '75%',
+                                        type: 'text',
+                                        classes: function(d) { return d.url ? 'clickable name' : 'name'; },
+                                        click: function(d) {
+                                          if (d.url) {
+                                            window.location.href = d.url;
+                                          }
+                                        }
+                                      },
+                                      {
+                                        key: 'type',
+                                        label: 'Type',
+                                        width: '25%',
+                                        type: 'text'
+                                      }
+                                    ]);
+
+                              //                             d3.select('#chart')
+                              //                               .datum(testData())
+                              //                               .call(chart);
+
+                              scope.d3Call(testData, chart);
+                              nv.utils.windowResize(chart.update);
+                              scope.chart = chart;
+                              return chart;
+                            },
+                            callback: attrs.callback === undefined ? null : scope.callback()
+                          });
+                        }
+                    }, (attrs.objectequality === undefined ? false : (attrs.objectequality === 'true')));
+                }
+            };
+        }])
+;
 
     //still need to implement
     //sparkbars??
