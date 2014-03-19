@@ -1,4 +1,4 @@
-/*! angularjs-nvd3-directives - v0.0.5-beta - 2014-03-11
+/*! angularjs-nvd3-directives - v0.0.5-beta - 2014-03-19
  * http://cmaurer.github.io/angularjs-nvd3-directives
  * Copyright (c) 2014 Christian Maurer; Licensed Apache License, v2.0 */
 ( function () {
@@ -3125,7 +3125,9 @@
         restrict: 'EA',
         scope: {
           data: '=',
-          columns: '='
+          columns: '=',
+          iconOpen: '@',
+          iconClose: '@'
         },
         controller: [ '$scope', '$element', '$attrs',
           function ( $scope, $element, $attrs ) {
@@ -3153,7 +3155,9 @@
 
                 var chart = nv.models.indentedTree()
                   .tableClass( 'table table-striped' ) //for bootstrap styling
-                .columns( scope.columns );
+                .columns( scope.columns )
+                  .iconOpen( scope.iconOpen )
+                  .iconClose( scope.iconClose );
 
 
                 //                             d3.select('#chart')
