@@ -2151,11 +2151,12 @@
         data: '=',
         columns: '=',
         iconOpen: '@',
-        iconClose: '@'
+        iconClose: '@',
+        containerId: '@'
       },
       controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs){
         $scope.d3Call = function(data, chart){
-          d3.select('#table-container')
+          d3.select($attrs.containerId || '#table-container')
             .datum(data)
             .call(chart);
         };
